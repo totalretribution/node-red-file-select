@@ -1,0 +1,27 @@
+{
+  "name": "@totalretribution/node-red-file-select",
+  "version": "0.1.0",
+  "description": "Allows the selection of a file from the provided folder and outputs said filename and full path on message received.",
+  "dependencies": {},
+  "keywords": [
+    "node-red",
+    "file",
+    "select",
+    "list"
+  ],
+  "node-red": {
+    "version": ">=2.0.0",
+    "nodes": {
+      "node-red-file-select": "node-red-file-select.js"
+    }
+  },
+  "license": "MIT",
+	"author": {
+		"name": "totalretribution"
+	},
+	"homepage": "",
+	"repository": {
+		"type": "git",
+		"url": ""
+	}
+}

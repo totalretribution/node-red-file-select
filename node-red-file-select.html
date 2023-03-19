@@ -1,0 +1,96 @@
+<script type="text/javascript">
+
+  function populateSelect(list) {
+    $('#node-input-file').empty();
+    for (var index = 0; index < list.length; index++) {
+      $('#node-input-file').append(new Option(list[index], list[index]));
+    }
+  }
+
+  function populateFiles(folder, file) {
+    $("#node-input-file").addClass('disabled');
+    $.post('node-red-file-select/files', { folder: folder })
+      .done(function (result, status, xhr) {
+        $("#node-input-file").removeClass('disabled');
+        var files = result || [];
+        populateSelect(files);
+        if (file != undefined) {
+          $("#node-input-file").val(file);
+          $("#node-input-file").change();
+        }
+      }, 'json')
+      .fail(function (xhr, status, error) {
+        populateSelect(['']);
+      });
+  }
+
+  function isValidFolder(path) {
+    return $.post('node-red-file-select/folder', { folder: path }).done(function (result) {
+      if (result == true) {
+        return true;
+      } else {
+        return false;
+      }
+    }, 'json');
+  }
+
+  RED.nodes.registerType('node-red-file-select', {
+    category: 'storage',
+    color: '#DEB887',
+    defaults: {
+      name: { value: "" },
+      folder: {
+        value: "", validate: function (v) {
+          if (v == "" || v == null) return false;
+          return true;
+        }
+      },
+      file: {
+        value: "", validate: function (v) {
+          if (v == "" || v == null) return false;
+          return true;
+        }
+      },
+    },
+    inputs: 1,
+    outputs: 3,
+    outputLabels: ["payload", "file name", "path"],
+    icon: "file.png",
+    label: function () {
+      return this.name || "file-select";
+    },
+    oneditprepare: function () {
+      if (this.folder != "" && this.folder != undefined) {
+        populateFiles(this.folder, this.file);
+      }
+
+      $("#node-button-file-refresh").click(function (e) {
+        const currentFolder = $("#node-input-folder").val();
+        const currentFile = $("#node-input-file").val();
+        if (currentFolder != '' && currentFolder != 'undefined') {
+          populateFiles(currentFolder, currentFile);
+        }
+      });
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="node-red-file-select">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="">
+  </div>
+  <div class="form-row">
+    <label for="node-input-folder"><i class="fa fa-tag"></i> Folder</label>
+    <input type="text" id="node-input-folder" placeholder="" required>
+  </div>
+  <div class="form-row">
+    <label for="node-input-file"><i class="fa fa-tag"></i> file</label>
+    <select id="node-input-file" required></select>
+    <button id="node-button-file-refresh" type="button" class="red-ui-button"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+  </div>
+</script>
+
+<script type="text/html" data-help-name="node-red-file-select">
+  <p>Allows the selection of a file from the provided folder and outputs said filename and full path on message received.</p>
+</script>
