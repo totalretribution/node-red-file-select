@@ -30,7 +30,7 @@ module.exports = function (RED) {
       node.send([msg, { payload: node.filename}, {payload: path.join(node.foldername, node.filename)}]);
     });
   }
-  RED.nodes.registerType("node-red-file-select", nodeRedFileSelect);
+  RED.nodes.registerType("file-select", nodeRedFileSelect);
 
   RED.httpAdmin.post("/node-red-file-select/files", function (req, res) {
     const folder = req.body.folder;
